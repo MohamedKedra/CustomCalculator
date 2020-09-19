@@ -1,4 +1,4 @@
-package com.example.customcalculator
+package com.example.customcalculator.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,12 +6,16 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doOnTextChanged
+import com.example.customcalculator.R
+import com.example.customcalculator.models.Calculator
+import com.example.customcalculator.presenter.CalculatorContract
+import com.example.customcalculator.presenter.CalculatorPresenter
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContract.View{
 
+    private lateinit var presenter: CalculatorPresenter
+    private lateinit var adapter: OperationAdapter
     private var op: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,12 +23,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_main)
 
         initActionState()
-        gv_operations.adapter = OperationAdapter(applicationContext)
 
         initEditTextState()
     }
 
     private fun initActionState() {
+
+        tv_result.text = resources.getText(R.string.result).toString().plus(0)
+
         btn_add.setOnClickListener(this)
         btn_sub.setOnClickListener(this)
         btn_mul.setOnClickListener(this)
@@ -36,6 +42,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         btn_undo.isClickable = false
         btn_redo.isClickable = false
         btn_equal.isClickable = false
+
+        adapter = OperationAdapter(applicationContext)
+
+        presenter = CalculatorPresenter(this)
     }
 
     private fun initEditTextState() {
@@ -57,28 +67,41 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(view: View?) {
 
+
         when (view?.id) {
 
             btn_add.id -> {
                 op = btn_add.text.toString()
+                presenter.setOperator(op.toString())
             }
             btn_sub.id -> {
 
                 op = btn_sub.text.toString()
+                presenter.setOperator(op.toString())
             }
             btn_mul.id -> {
 
                 op = btn_mul.text.toString()
+                presenter.setOperator(op.toString())
             }
             btn_div.id -> {
                 op = btn_div.text.toString()
+                presenter.setOperator(op.toString())
             }
             btn_equal.id -> {
-                op ?:
-                Log.d("equal", op.toString())
+                presenter.completeCalculation(et_operand.text.toString())
             }
         }
 
         Log.d("op", op.toString())
+    }
+
+    override fun updateResultAndOpList(list: ArrayList<Calculator>) {
+
+        adapter.setItems(list)
+        gv_operations.adapter = adapter
+
+        et_operand.setText("")
+        tv_result.text = resources.getText(R.string.result).toString().plus(list[list.size -1].result)
     }
 }

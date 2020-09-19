@@ -1,11 +1,13 @@
 package com.example.customcalculator.view
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import com.example.customcalculator.R
 import com.example.customcalculator.models.Calculator
 import com.example.customcalculator.presenter.CalculatorContract
@@ -16,7 +18,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
 
     private lateinit var presenter: CalculatorPresenter
     private lateinit var adapter: OperationAdapter
-    private var op: String? = null
+    private var selectedView : View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
         btn_undo.setOnClickListener(this)
         btn_redo.setOnClickListener(this)
 
+        gv_operations.visibility = View.GONE
         btn_undo.isClickable = false
         btn_redo.isClickable = false
         btn_equal.isClickable = false
@@ -55,7 +58,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
 
             override fun onTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 text?.let {
-                    btn_equal.isClickable = text.isNotEmpty() && op != null
+                    btn_equal.isClickable = text.isNotEmpty() && !presenter.getList().isNullOrEmpty() && !presenter.getList().last().op.isNullOrEmpty()
                 }
             }
 
@@ -70,23 +73,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
         when (view?.id) {
 
             btn_add.id -> {
-                op = btn_add.text.toString()
-                presenter.setOperator(op.toString())
+
+                implAction(btn_add)
+
             }
             btn_sub.id -> {
-                op = btn_sub.text.toString()
-                presenter.setOperator(op.toString())
+                implAction(btn_sub)
             }
             btn_mul.id -> {
-                op = btn_mul.text.toString()
-                presenter.setOperator(op.toString())
+                implAction(btn_mul)
             }
             btn_div.id -> {
-                op = btn_div.text.toString()
-                presenter.setOperator(op.toString())
+                implAction(btn_div)
             }
             btn_equal.id -> {
                 presenter.completeCalculation(et_operand.text.toString())
+                deselectOp()
+                hideKeyboard()
             }
             btn_undo.id -> {
 
@@ -101,10 +104,24 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
         }
     }
 
+    private fun implAction(view: Button){
+        view.background = resources.getDrawable(R.drawable.draw_op_selected)
+        presenter.setOperator(view.text.toString())
+        selectedView = view
+
+        et_operand.text?.let {
+            if (it.toString().isNotEmpty()) btn_equal.isClickable = true
+        }
+    }
+
     override fun updateResultAndOpList(list: ArrayList<Calculator>) {
 
-        if (presenter.getList().isNotEmpty())
+        if (presenter.getList().isNotEmpty()) {
             btn_undo.isClickable = true
+            gv_operations.visibility = View.VISIBLE
+        }
+        else
+            gv_operations.visibility = View.GONE
 
         if (presenter.getRemovedList().isNotEmpty())
             btn_redo.isClickable = true
@@ -114,5 +131,29 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
 
         et_operand.setText("")
         tv_result.text = resources.getText(R.string.result).toString().plus(if (list.isNotEmpty()) list[list.lastIndex].result else 0)
+    }
+
+    private fun hideKeyboard(){
+
+        val inputMethodManager : InputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+
+        inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken,0)
+    }
+
+    private fun deselectOp(){
+        when(selectedView?.id){
+            btn_add.id -> {
+                btn_add.background = null
+            }
+            btn_sub.id -> {
+                btn_sub.background = null
+            }
+            btn_mul.id -> {
+                btn_mul.background = null
+            }
+            btn_div.id -> {
+                btn_div.background = null
+            }
+        }
     }
 }

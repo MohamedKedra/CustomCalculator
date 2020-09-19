@@ -126,7 +126,6 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <GridView
-        android:layout_margin="@dimen/little_margin_space"
         android:padding="@dimen/little_margin_space"
         app:layout_constraintTop_toBottomOf="@id/ll_actions"
         app:layout_constraintRight_toRightOf="parent"

@@ -16,9 +16,12 @@ class CalculatorPresenter(private val view: CalculatorContract.View) : Calculato
     }
 
     override fun completeCalculation(operand: String) {
-        calculator.operand = operand.toInt()
-        list.add(getResult())
-        view.updateResultAndOpList(list)
+        if (!calculator.op.isNullOrEmpty()) {
+            calculator.operand = operand.toInt()
+            list.add(getResult())
+            calculator = Calculator()
+            view.updateResultAndOpList(list)
+        }
     }
 
     override fun undoOperation() {

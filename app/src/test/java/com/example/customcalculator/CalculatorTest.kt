@@ -101,6 +101,42 @@ class CalculatorTest : CalculatorContract.View {
         assert(presenter.getList().size == 2)
     }
 
+    @Test
+    fun example_isCorrect(){
+
+        presenter.setOperator("+")
+        presenter.completeCalculation("3")
+        assertEquals(3, presenter.getList()[0].result)
+
+        presenter.setOperator("+")
+        presenter.completeCalculation("2")
+        assertEquals(5, presenter.getList()[1].result)
+
+        presenter.setOperator("*")
+        presenter.completeCalculation("5")
+        assertEquals(25, presenter.getList()[2].result)
+
+        presenter.undoOperation()
+        presenter.undoOperation()
+        assert(presenter.getList().size == 1)
+        assertEquals(3,presenter.getList()[0].result)
+
+        presenter.redoOperation()
+        assert(presenter.getList().size == 2)
+        assertEquals(5,presenter.getList()[1].result)
+
+        presenter.setOperator("+")
+        presenter.completeCalculation("3")
+        assertEquals(8, presenter.getList()[2].result)
+
+
+        presenter.undoOperation()
+        presenter.undoOperation()
+        presenter.undoOperation()
+        presenter.undoOperation()
+        assertEquals(25,presenter.getList()[0].result)
+    }
+
     override fun updateResultAndOpList(list: ArrayList<Calculator>) {
     }
 }

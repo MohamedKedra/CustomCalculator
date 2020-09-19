@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
 
             override fun onTextChanged(text: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 text?.let {
-                    btn_equal.isClickable = text.isNotEmpty() && !presenter.getList().isNullOrEmpty() && !presenter.getList().last().op.isNullOrEmpty()
+                    btn_equal.isClickable = text.isNotEmpty() && selectedView != null
                 }
             }
 
@@ -75,7 +75,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
             btn_add.id -> {
 
                 implAction(btn_add)
-
             }
             btn_sub.id -> {
                 implAction(btn_sub)
@@ -105,6 +104,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
     }
 
     private fun implAction(view: Button){
+        if(selectedView != null) deselectOp()
         view.background = resources.getDrawable(R.drawable.draw_op_selected)
         presenter.setOperator(view.text.toString())
         selectedView = view
@@ -141,6 +141,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
     }
 
     private fun deselectOp(){
+
         when(selectedView?.id){
             btn_add.id -> {
                 btn_add.background = null
@@ -155,5 +156,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
                 btn_div.background = null
             }
         }
+
+        selectedView = null
     }
 }

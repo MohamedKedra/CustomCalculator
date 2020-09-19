@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">CustomCalculator</string>
+    <string name="result">Result = 25</string>
+    <string name="operand">Enter The second operand"</string>
+    <string name="redo">Redo</string>
+    <string name="undo">Undo</string>
+    <string name="add">+</string>
+    <string name="sub">-</string>
+    <string name="mul">*</string>
+    <string name="div">/</string>
+    <string name="equal">=</string>
+    <string name="operation">* 6</string>
 </resources>

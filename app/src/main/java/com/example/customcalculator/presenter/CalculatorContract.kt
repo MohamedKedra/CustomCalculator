@@ -14,5 +14,7 @@ class CalculatorContract {
         fun setOperator(op :String)
 
         fun completeCalculation(operand : String)
+
+        fun undoOperation()
     }
 }

@@ -10,13 +10,18 @@ class CalculatorPresenter(private val view: CalculatorContract.View) : Calculato
     override fun setOperator(op: String) {
         calculator = Calculator()
         if(list.isNotEmpty())
-        calculator.result = list[list.size - 1].result
+        calculator.result = list[list.lastIndex].result
         calculator.op = op
     }
 
     override fun completeCalculation(operand: String) {
         calculator.operand = operand.toInt()
         list.add(getResult())
+        view.updateResultAndOpList(list)
+    }
+
+    override fun undoOperation() {
+        list.removeLast()
         view.updateResultAndOpList(list)
     }
 
@@ -30,4 +35,6 @@ class CalculatorPresenter(private val view: CalculatorContract.View) : Calculato
         }
         return calculator
     }
+
+
 }

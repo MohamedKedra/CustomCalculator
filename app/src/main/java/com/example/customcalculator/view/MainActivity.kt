@@ -67,14 +67,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
 
     override fun onClick(view: View?) {
 
-
         when (view?.id) {
 
             btn_add.id -> {
                 op = btn_add.text.toString()
                 presenter.setOperator(op.toString())
             }
-            btn_sub.id -> {0
+            btn_sub.id -> {
                 op = btn_sub.text.toString()
                 presenter.setOperator(op.toString())
             }
@@ -90,18 +89,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener ,CalculatorContra
                 presenter.completeCalculation(et_operand.text.toString())
             }
             btn_undo.id -> {
-                presenter.undoOperation()
+
+                if (presenter.getList().isNotEmpty())
+                      presenter.undoOperation()
             }
             btn_redo.id -> {
+
+                if (presenter.getRemovedList().isNotEmpty())
+                     presenter.redoOperation()
             }
         }
-
-        Log.d("op", op.toString())
     }
 
     override fun updateResultAndOpList(list: ArrayList<Calculator>) {
 
-        btn_undo.isClickable = true
+        if (presenter.getList().isNotEmpty())
+            btn_undo.isClickable = true
+
+        if (presenter.getRemovedList().isNotEmpty())
+            btn_redo.isClickable = true
 
         adapter.setItems(list)
         gv_operations.adapter = adapter

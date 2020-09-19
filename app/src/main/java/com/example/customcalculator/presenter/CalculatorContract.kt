@@ -16,5 +16,11 @@ class CalculatorContract {
         fun completeCalculation(operand : String)
 
         fun undoOperation()
+
+        fun redoOperation()
+
+        fun getList() : ArrayList<Calculator>
+
+        fun getRemovedList() : ArrayList<Calculator>
     }
 }
